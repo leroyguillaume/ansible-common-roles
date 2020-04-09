@@ -1,0 +1,49 @@
+# certbot: ensure certbot is installed and certificate is installed
+---
+- include: ../roles/common/package/tasks/certbot.yml
+
+- set_fact:
+    nginx_rp_certbot_dir: /var/www/certbot
+
+- name: ensure certbot configuration is up-to-date
+  become: yes
+  template:
+    src: certbot.conf.j2
+    dest: /etc/nginx/sites-available/certbot.conf
+
+- name: ensure certbot configuration is enabled
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/certbot.conf
+    src: /etc/nginx/sites-available/certbot.conf
+    state: link
+
+- name: ensure nginx is reloaded
+  become: yes
+  service:
+    name: nginx
+    state: reloaded
+
+- name: ensure certbot directory is present
+  become: yes
+  file:
+    path: "{{ nginx_rp_certbot_dir }}"
+    state: directory
+
+- name: ensure ssl certificates are generated
+  become: yes
+  command: "certbot certonly --register-unsafely-without-email --agree-tos -a webroot --webroot-path={{ nginx_rp_certbot_dir }} -d {{ nginx_rp_domain }}"
+  args:
+    creates: "/etc/letsencrypt/live/{{ nginx_rp_domain }}/fullchain.pem"
+
+- name: ensure certbot configuration is disabled
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/certbot.conf
+    state: absent
+
+- name: ensure nginx is reloaded
+  become: yes
+  service:
+    name: nginx
+    state: reloaded

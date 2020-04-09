@@ -1,0 +1,7 @@
+# epel: ensure epel is installed
+---
+- when: ansible_os_family == 'RedHat'
+  name: ensure epel is installed
+  become: yes
+  yum:
+    name: epel-release

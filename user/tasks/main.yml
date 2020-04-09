@@ -1,0 +1,70 @@
+# user: ensure user is present
+# Vars:
+#  - user_name (string, required): name of user
+#  - user_hashed_pwd (string, default: unset): hashed password of user
+#  - user_home (string, default: /home/{{ user_name }}): home directory of user
+#  - user_is_sudoer (boolean, default: no): true if user is sudoer
+#  - user_shell (string, default: unset): path to shell of user
+#  - user_authorized_keys (list of strings, default: unset): list of ssh authorized keys of user
+---
+# Out:
+#   - user_groups (list of strings): groups of user
+- when: ansible_os_family == 'Debian'
+  include: debian.yml
+
+- when: ansible_os_family == 'RedHat'
+  include: redhat.yml
+
+- name: ensure groups are present
+  become: yes
+  group:
+    name: "{{ user_group }}"
+  loop: "{{ user_groups }}"
+  loop_control:
+    loop_var: user_group
+
+- name: "ensure user '{{ user_name }}' is present"
+  become: yes
+  user:
+    name: "{{ user_name }}"
+    groups: "{{ user_groups }}"
+    home: "{{ user_home }}"
+    move_home: yes
+
+- when: user_hashed_pwd is defined
+  name: "ensure password of user '{{ user_name }}' is up-to-date"
+  become: yes
+  user:
+    name: "{{ user_name }}"
+    password: "{{ user_hashed_pwd }}"
+    update_password: always
+
+- when: user_shell is defined
+  name: "ensure shell of user '{{ user_name }}' is up-to-date"
+  become: yes
+  user:
+    name: "{{ user_name }}"
+    shell: "{{ user_shell }}"
+
+- getent:
+    database: passwd
+    key: "{{ user_name }}"
+    split: ":"
+
+- name: ensure .ssh directory is present
+  become: yes
+  file:
+    path: "{{ getent_passwd[user_name][4] }}/.ssh"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- when: user_authorized_keys is defined
+  name: ensure authorized keys are up-to-date
+  become: yes
+  template:
+    src: authorized_keys.j2
+    dest: "{{ getent_passwd[user_name][4] }}/.ssh/authorized_keys"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: '0600'

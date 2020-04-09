@@ -1,0 +1,15 @@
+# certbot: ensure certbot is installed
+---
+- include: ../roles/common/package_repository/tasks/stretch-backports.yml
+
+- when: ansible_os_family == 'Debian'
+  name: ensure certbot is installed
+  become: yes
+  apt:
+    name: certbot
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure certbot is installed
+  become: yes
+  yum:
+    name: certbot

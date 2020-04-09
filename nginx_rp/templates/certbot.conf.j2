@@ -1,0 +1,13 @@
+server {
+    listen      80;
+    server_name {{ nginx_rp_domain }};
+
+    root {{ nginx_rp_certbot_dir }};
+
+    access_log /var/log/nginx/certbot-access.log;
+    error_log  /var/log/nginx/certbot-error.log;
+
+    location ~ /.well-known {
+        allow all;
+    }
+}

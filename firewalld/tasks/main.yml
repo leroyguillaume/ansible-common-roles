@@ -1,0 +1,23 @@
+# firewalld: ensure firewalld is installed and configured
+---
+- include: ../roles/common/package/tasks/firewalld.yml
+
+- name: ensure service is running
+  become: yes
+  service:
+    name: firewalld
+    state: started
+
+- name: ensure services are enabled
+  become: yes
+  firewalld:
+    service: "{{ firewalld_service }}"
+    immediate: yes
+    permanent: yes
+    state: enabled
+  loop:
+    - ssh
+    - http
+    - https
+  loop_control:
+    loop_var: firewalld_service

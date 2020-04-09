@@ -1,0 +1,8 @@
+# stretch-backports: ensure stretch-backports repository is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure stretch-backports repository is installed
+  become: yes
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian stretch-backports main
+    update_cache: yes

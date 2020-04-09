@@ -1,0 +1,8 @@
+---
+- set_fact:
+    user_groups:
+      - "{{ user_name }}"
+
+- when: user_is_sudoer | default('no') | bool
+  set_fact:
+    user_groups: "{{ user_groups + ['wheel'] }}"

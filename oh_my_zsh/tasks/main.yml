@@ -1,0 +1,31 @@
+# oh_my_zsh: ensure oh my zsh is installed
+# Vars:
+#   - oh_my_zsh_user (string, required): name of user to installed oh my zsh
+---
+- include: ../roles/common/package/tasks/git.yml
+- include: ../roles/common/package/tasks/zsh.yml
+- include: ../roles/common/package/tasks/less.yml
+
+- getent:
+    database: passwd
+    key: "{{ oh_my_zsh_user }}"
+    split: ":"
+
+- set_fact:
+    oh_my_zsh_user_home: "{{ getent_passwd[oh_my_zsh_user][4] }}"
+
+- name: ensure oh my zsh git repository is cloned
+  become: yes
+  become_user: "{{ oh_my_zsh_user }}"
+  git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: "{{ oh_my_zsh_user_home }}/.oh-my-zsh"
+    depth: 1
+
+- name: ensure .zshrc file is up-to-date
+  become: yes
+  copy:
+    src: zshrc
+    dest: "{{ oh_my_zsh_user_home }}/.zshrc"
+    owner: "{{ oh_my_zsh_user }}"
+    group: "{{ oh_my_zsh_user }}"

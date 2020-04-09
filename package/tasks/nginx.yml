@@ -1,0 +1,15 @@
+# nginx: ensure nginx is installed
+---
+- include: ../roles/common/package/tasks/epel.yml
+
+- when: ansible_os_family == 'Debian'
+  name: ensure nginx is installed
+  become: yes
+  apt:
+    name: nginx
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure nginx is installed
+  become: yes
+  yum:
+    name: nginx

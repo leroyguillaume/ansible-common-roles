@@ -1,0 +1,20 @@
+# postgresql: ensure postgresql repository is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure postgresql repository key is installed
+  become: yes
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+- when: ansible_os_family == 'Debian'
+  name: ensure postgresql repository is installed
+  become: yes
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main postgresql main"
+    update_cache: yes
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure postgresql repository is installed
+  become: yes
+  yum:
+    name: https://yum.postgresql.org/11/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm

@@ -1,0 +1,13 @@
+# jre11-openjdk: ensure openjdk jre 11 is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure openjdk jre 11 is installed
+  become: yes
+  apt:
+    name: openjdk-11-jre
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure openjdk jre 11 is installed
+  become: yes
+  yum:
+    name: java-11-openjdk

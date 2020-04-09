@@ -1,0 +1,13 @@
+# firewalld: ensure firewalld is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure firewalld is installed
+  become: yes
+  apt:
+    name: firewalld
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure firewalld is installed
+  become: yes
+  yum:
+    name: firewalld

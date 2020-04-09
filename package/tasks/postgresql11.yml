@@ -1,0 +1,19 @@
+# postgresql11: ensure postgresql 11 is installed
+---
+- include: ../roles/common/package_repository/tasks/postgresql11.yml
+
+- when: ansible_os_family == 'Debian'
+  name: ensure postgresql 11 is installed
+  become: yes
+  apt:
+    name:
+      - postgresql-11
+      - python3-psycopg2
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure postgresql11 is installed
+  become: yes
+  yum:
+    name:
+      - postgresql11-server
+      - python3-psycopg2

@@ -1,0 +1,13 @@
+# git: ensure git is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure git is installed
+  become: yes
+  apt:
+    name: git
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure git is installed
+  become: yes
+  yum:
+    name: git

@@ -1,0 +1,9 @@
+# sshd: ensure sshd configuration is up-to-date
+---
+- name: ensure ssh config is up-to-date
+  become: yes
+  copy:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+  notify:
+    - restart sshd

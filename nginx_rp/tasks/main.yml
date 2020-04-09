@@ -1,0 +1,43 @@
+# nginx_rp: ensure rp is installed with https configuration
+# Vars:
+#  - nginx_rp_domain (string, required): http domain
+#  - nginx_rp_proxy_pass (string, required): http url of proxy pass
+#  - nginx_rp_client_max_body_size (number, default: omit): max client body size
+#  - nginx_rp_location (string, default: /): context path
+---
+- include: ../roles/common/package/tasks/nginx.yml
+
+- set_fact:
+    nginx_rp_cert_file: "/etc/letsencrypt/live/{{ nginx_rp_domain }}/fullchain.pem"
+    nginx_rp_key_file: "/etc/letsencrypt/live/{{ nginx_rp_domain }}/privkey.pem"
+
+- become: yes
+  stat:
+    path: "{{ nginx_rp_cert_file }}"
+  register: nginx_rp_cert_file_stat
+
+- name: ensure default configuration is disabled
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- when: not nginx_rp_cert_file_stat.stat.exists
+  include: certbot.yml
+
+- name: ensure configuration is up-to-date
+  become: yes
+  template:
+    src: rp.conf.j2
+    dest: "/etc/nginx/sites-available/{{ nginx_rp_domain }}.conf"
+  notify:
+    - reload nginx
+
+- name: ensure configuration is enabled
+  become: yes
+  file:
+    path: "/etc/nginx/sites-enabled/{{ nginx_rp_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ nginx_rp_domain }}.conf"
+    state: link
+  notify:
+    - reload nginx

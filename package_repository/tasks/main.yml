@@ -1,0 +1,5 @@
+# package_repository: ensure package repository is installed
+# Vars:
+#  - package_repository_name (string, required): name of task file to include
+---
+- include: "{{ package_repository_name }}.yml"

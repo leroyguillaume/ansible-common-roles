@@ -1,0 +1,22 @@
+# postgresql_db: ensure db and user are present
+# Vars:
+#   - postgresql_db_name (string, required): name of database
+#   - postgresql_db_username (string, required): username of owner of database
+#   - postgresql_db_password (string, required): password of owner of database
+---
+- include: ../roles/common/package/tasks/postgresql11.yml
+
+- name: "ensure user '{{ postgresql_db_username }}' is present"
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ postgresql_db_username }}"
+    password: "{{ postgresql_db_password }}"
+    role_attr_flags: SUPERUSER
+
+- name: "ensure database '{{ postgresql_db_name }}' is present"
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name: "{{ postgresql_db_name }}"
+    owner: "{{ postgresql_db_username }}"

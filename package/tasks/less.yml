@@ -1,0 +1,13 @@
+# less: ensure less is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure less is installed
+  become: yes
+  apt:
+    name: less
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure less is installed
+  become: yes
+  yum:
+    name: less

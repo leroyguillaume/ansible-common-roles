@@ -1,0 +1,11 @@
+---
+- name: restart sshd
+  become: yes
+  systemd:
+    name: sshd
+    state: restarted
+- name: reload nginx
+  become: yes
+  systemd:
+    name: nginx
+    state: reloaded

@@ -1,0 +1,13 @@
+# curl: ensure curl is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure curl is installed
+  become: yes
+  apt:
+    name: curl
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure curl is installed
+  become: yes
+  yum:
+    name: curl

@@ -1,0 +1,13 @@
+# vim: ensure vim is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure vim is installed
+  become: yes
+  apt:
+    name: vim
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure vim is installed
+  become: yes
+  yum:
+    name: vim

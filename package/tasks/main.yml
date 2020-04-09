@@ -1,0 +1,5 @@
+# package: ensure package is installed
+# Vars:
+#  - package_name (string, required): name of task file to include
+---
+- include: "{{ package_name }}.yml"

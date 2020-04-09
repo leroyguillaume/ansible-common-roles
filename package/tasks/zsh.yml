@@ -1,0 +1,13 @@
+# zsh: ensure zsh is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure zsh is installed
+  become: yes
+  apt:
+    name: zsh
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure zsh is installed
+  become: yes
+  yum:
+    name: zsh
