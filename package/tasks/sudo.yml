@@ -1,0 +1,13 @@
+# sudo: ensure sudo is installed
+---
+- when: ansible_os_family == 'Debian'
+  name: ensure git is installed
+  become: yes
+  apt:
+    name: sudo
+
+- when: ansible_os_family == 'RedHat'
+  name: ensure git is installed
+  become: yes
+  yum:
+    name: sudo
