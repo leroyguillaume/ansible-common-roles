@@ -1,6 +1,7 @@
 # sshd: ensure sshd configuration is up-to-date
 # Vars:
 #  - sshd_permit_root_login (string, default: no): value of PermitRootLogin
+#  - sshd_password_authentication (string, default: no): value of PasswordAuthentication
 ---
 - name: ensure ssh config is up-to-date
   become: yes
