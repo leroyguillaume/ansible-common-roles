@@ -1,9 +1,12 @@
 # sshd: ensure sshd configuration is up-to-date
+# Vars:
+#  - sshd_permit_root_login (string, default: no): value of PermitRootLogin
 ---
 - name: ensure ssh config is up-to-date
   become: yes
-  copy:
-    src: sshd_config
+  template:
+    src: sshd_config.j2
     dest: /etc/ssh/sshd_config
   notify:
-    - restart sshd
+    - sshd_reload
+
